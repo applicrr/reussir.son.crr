@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Cap sur le CRR</title><meta name="description" content="Révise gratuitement le CRR (permis radio VHF) : cours, entraînement et examens blancs."></head><body>
+<!doctype html><html lang="fr"><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Cap sur le CRR</title><meta name="description" content="Révise gratuitement le CRR (permis radio VHF) : cours, entraînement et examens blancs."><script defer src="https://cloud.umami.is/script.js" data-website-id="14c8f0db-c3e3-4b70-9aa7-5df9c1f35743" data-domains="applicrr.github.io"></script></head><body>
 
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2407,7 +2407,10 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
   const set = html => { app.innerHTML = html; };
 
   /* ---------- routage ---------- */
+  let routed = 0;
+  function trk(name, data) { try { if (window.umami) window.umami.track(name, data); } catch (e) {} }
   function route() {
+    if (routed++) { const r = (location.hash || "#accueil").slice(1); try { if (window.umami) window.umami.track(p => ({ ...p, url: location.pathname + r, title: "Cap sur le CRR - " + r })); } catch (e) {} }
     stopTimer(); setLocked(false); T = null; E = null;
     const raw = (location.hash || "#accueil").slice(1);
     const k = raw.indexOf("-");
@@ -2576,6 +2579,7 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
   }
   function trainEnd() {
     const n = T.list.length, pct = Math.round((T.score / n) * 100);
+    trk("entrainement-termine", { questions: n, score_pct: pct });
     const missed = T.missed.map(p => `<div class="item ko"><span class="tag">${esc(SECTIONS[p.q.s].c)}</span><h3>${esc(p.q.q)}</h3>
       <div class="opt good"><span class="L">✓</span><span class="t">${esc(p.opts.find(o => o.ok).t)}</span></div>
       <p class="exp">${esc(p.q.e)}</p>${srcHTML(p.q)}</div>`).join("");
@@ -2692,8 +2696,9 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
     const by = { 1: [0, 0], 2: [0, 0], 3: [0, 0] };
     let score = 0;
     E.list.forEach((p, i) => { const ok = E.ans[i] >= 0 && p.opts[E.ans[i]].ok; if (!E.noted) note(p.q, ok); by[p.q.s][1]++; if (ok) { score++; by[p.q.s][0]++; } });
-    E.noted = true;
     const pct = Math.round((score / n) * 100);
+    if (!E.noted) trk("examen-termine", { questions: n, score_pct: pct, recu: [1, 2, 3].every(s => by[s][1] > 0 && by[s][0] >= Math.ceil(by[s][1] / 2)) ? "oui" : "non" });
+    E.noted = true;
     const h = loadHist(); h.push({ s: score, n }); saveHist(h);
     const need = s => Math.ceil(by[s][1] / 2);            // seuil ANFR : la moyenne (moitié des points) à chacune des 3 parties
     const okSec = s => by[s][1] > 0 && by[s][0] >= need(s);
