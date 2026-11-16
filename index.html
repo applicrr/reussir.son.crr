@@ -2359,10 +2359,10 @@ const STN = (() => {
   const seenHTML = () => STN_SEEN.length
     ? `<p class="stn-seen"><b>Stations déjà signalées :</b> ${STN_SEEN.map(esc3).join(" · ")}<span class="stn-fine">Liste mise à jour chaque matin.</span></p>`
     : `<p class="stn-seen">Aucune station signalée pour l'instant : soyez la première.<span class="stn-fine">Liste mise à jour chaque matin.</span></p>`;
-  const done = v => `<div class="stn-ok" role="status"><b>Au moins un(e) équipier(ère) de ${esc3(v)} utilise le site.</b>
-      <span>Merci, c'est noté. Rien d'autre n'est enregistré : ni nom, ni compte.</span>
+  const done = v => `<div class="stn-ok" role="status"><b>Balise reçue : au moins un(e) équipier(ère) de ${esc3(v)} révise son CRR.</b>
+      <span>Rien d'autre n'est enregistré : ni nom, ni compte.</span>
       <button class="linkbtn" id="stnchg" type="button">Changer de station</button></div>${seenHTML()}`;
-  const form = () => `<p class="stn-lead">Vous êtes sauveteur ou sauveteuse à la SNSM ? Dites d'où vous venez : la station apparaîtra dans la liste, sans aucune donnée personnelle.</p>
+  const form = () => `<p class="stn-lead">Une station, un point sur la carte. Déclenchez la vôtre : c'est la seule alerte qui ne mobilise personne.</p>
       <input class="stn-in" type="search" autocomplete="off" spellcheck="false" placeholder="Tapez votre station : Trévignon, Royan…" aria-label="Chercher votre station SNSM">
       <div class="stn-res"></div>${seenHTML()}`;
   function mapHTML(sel) {
@@ -2376,7 +2376,7 @@ const STN = (() => {
         <path class="fr" d="${FR_PATH}"/><path class="fr" d="${CO_PATH}"/>${dots}</svg>
       <figcaption>${lost ? "Station d'outre-mer : elle n'apparaît pas sur la carte de métropole." : sel ? "Votre station est le point orange." : "Les stations qui utilisent déjà le site."}</figcaption></figure>`;
   }
-  const inner = () => `<div class="stn-main"><div class="ico">⚓</div><h2>D'où venez-vous ?</h2>${get() ? done(get()) : form()}</div>${mapHTML(get())}`;
+  const inner = () => `<div class="stn-main"><div class="ico">⚓</div><h2>Plantez votre balise</h2>${get() ? done(get()) : form()}</div>${mapHTML(get())}`;
   const html = () => `<section class="card stn" id="stn">${inner()}</section>`;
   const redraw = root => { root.querySelector("#stn").innerHTML = inner(); wire(root); };
   function wire(root) {
