@@ -2559,6 +2559,7 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
         const ok = p.opts[sel].ok;
         T.by[p.q.s][1]++; if (ok) T.by[p.q.s][0]++;
         note(p.q, ok);
+        trk("question-repondue", { mode: "entrainement", partie: SECTIONS[p.q.s].c, resultat: ok ? "juste" : "faux" });
         if (ok) { T.score++; T.streak++; } else { T.streak = 0; T.missed.push(p); }
         box.innerHTML = optsHTML(p, "review", sel);
         box.querySelectorAll(".opt").forEach(o => o.setAttribute("aria-disabled", "true"));
@@ -2579,7 +2580,7 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
   }
   function trainEnd() {
     const n = T.list.length, pct = Math.round((T.score / n) * 100);
-    trk("entrainement-termine", { questions: n, score_pct: pct });
+    trk("entrainement-termine", { questions: n, bonnes: T.score, score_pct: pct });
     const missed = T.missed.map(p => `<div class="item ko"><span class="tag">${esc(SECTIONS[p.q.s].c)}</span><h3>${esc(p.q.q)}</h3>
       <div class="opt good"><span class="L">✓</span><span class="t">${esc(p.opts.find(o => o.ok).t)}</span></div>
       <p class="exp">${esc(p.q.e)}</p>${srcHTML(p.q)}</div>`).join("");
@@ -2697,7 +2698,7 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
     let score = 0;
     E.list.forEach((p, i) => { const ok = E.ans[i] >= 0 && p.opts[E.ans[i]].ok; if (!E.noted) note(p.q, ok); by[p.q.s][1]++; if (ok) { score++; by[p.q.s][0]++; } });
     const pct = Math.round((score / n) * 100);
-    if (!E.noted) trk("examen-termine", { questions: n, score_pct: pct, recu: [1, 2, 3].every(s => by[s][1] > 0 && by[s][0] >= Math.ceil(by[s][1] / 2)) ? "oui" : "non" });
+    if (!E.noted) trk("examen-termine", { questions: n, bonnes: score, score_pct: pct, recu: [1, 2, 3].every(s => by[s][1] > 0 && by[s][0] >= Math.ceil(by[s][1] / 2)) ? "oui" : "non" });
     E.noted = true;
     const h = loadHist(); h.push({ s: score, n }); saveHist(h);
     const need = s => Math.ceil(by[s][1] / 2);            // seuil ANFR : la moyenne (moitié des points) à chacune des 3 parties
