@@ -379,6 +379,19 @@ td.m,th.m{font-variant-numeric:tabular-nums;white-space:nowrap}
 .lk-none{margin:12px 0 0;font-size:.9rem;color:var(--muted);font-weight:600}
 .lookup .lk-top b{color:var(--ink)}
 .lk-item b{color:var(--ink)}
+.card.stn{grid-column:1/-1;text-align:left}
+.card.stn h2{margin-bottom:6px}
+.stn-lead{color:var(--muted);font-weight:600;margin:0 0 12px}
+.stn-in{width:100%;max-width:420px;box-sizing:border-box;padding:11px 14px;border-radius:999px;border:2px solid var(--line);background:var(--bg);font:inherit;font-weight:700;color:inherit}
+.stn-in:focus{outline:none;border-color:var(--orange)}
+.stn-res{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.stn-hit{border:2px solid var(--line);background:var(--surface-2);color:inherit;font:inherit;font-weight:800;border-radius:999px;padding:8px 14px;cursor:pointer}
+.stn-hit:hover,.stn-hit:focus-visible{border-color:var(--orange);outline:none}
+.stn-none{margin:0;font-weight:600;color:var(--muted)}
+.stn-ok{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:12px 14px;border-radius:14px;background:var(--good-bg);color:var(--good-ink);margin-bottom:12px}
+.stn-ok span{font-weight:600;font-size:.88rem}
+.stn-seen{margin:14px 0 0;font-size:.9rem;font-weight:600;color:var(--muted);line-height:1.5}
+.stn-fine{display:block;font-size:.8rem;opacity:.85}
 </style>
 <header class="bar" id="bar">
   <div class="wrap">
@@ -2321,6 +2334,49 @@ const LK = (() => {
   }
   return { html, wire, run };
 })();
+/* Rubrique « D'où venez-vous ? » : stations SNSM. Liste non officielle (annuaire SNSM, Wikipédia) ; les stations signalées sont relevées chaque matin dans les statistiques anonymes. */
+const STATIONS = ["Agde – Cap d'Agde", "Agon-Coutainville", "Ajaccio", "Anglet – Bayonne", "Antibes", "Arcachon", "Arès – Nord Bassin", "Argenton – Porspoder – Lanildut", "Arromanches-les-Bains", "Arzon – Port-Navalo", "Asnelles", "Audierne", "Auray – La Trinité-sur-Mer", "Bandol", "Banyuls-sur-Mer", "Barfleur", "Barneville-Carteret", "Basse-Terre", "Bastia", "Beg Meil – Fouesnant", "Belle-Île-en-Mer", "Bénodet", "Berck-sur-Mer", "Bernières-sur-Mer", "Binic", "Blainville-sur-Mer", "Bonifacio", "Bormes-les-Mimosas", "Boulogne-sur-Mer", "Boulouparis", "Bourcefranc – Marennes", "Brest", "Brignogan-Plages", "Calais", "Calvi", "Camaret-sur-Mer", "Cancale", "Canet-en-Roussillon", "Cannes – Golfe-Juan", "Capbreton – Hossegor", "Carantec", "Carro", "Cavalaire-sur-Mer", "Cayeux-sur-Mer", "Cherbourg", "Clohars-Carnoët", "Concarneau", "Courseulles-sur-Mer", "Cros-de-Cagnes", "Dahouët – Pléneuf-Val-André", "Damgan", "Diélette – Flamanville", "Dieppe", "Dinard", "Dives-sur-Mer", "Douarnenez", "Dunkerque", "Erquy", "Étel", "Fécamp", "Fermanville", "Fort-de-France", "Fort-Mahon-Plage", "Fromentine", "Frontignan", "Golfe du Morbihan", "Goury – La Hague", "Gouville-sur-Mer", "Grandcamp-Maisy", "Granville", "Gravelines", "Graye-sur-Mer", "Groix", "Gruissan", "Hendaye", "Honfleur", "Hyères", "Île d'Aix", "Île de Bréhat", "Île de Houat", "Île de Ré", "Île de Sein", "Île d'Hoëdic", "Île d'Oléron", "Île d'Yeu", "Île-Molène", "Isigny-sur-Mer", "Jard-sur-Mer", "Koumac", "Kourou", "L'Aber-Wrac'h", "Lacanau", "La Ciotat", "La Cotinière", "La Grande-Motte", "La Londe", "Lancieux", "La Rochelle – La Pallice", "La Seyne – Saint-Mandrier", "La Tranche-sur-Mer", "La Tremblade", "La Turballe", "Le Barcarès", "Le Conquet", "Le Croisic", "Le Crotoy", "Lège-Cap-Ferret", "Le Guilvinec", "Le Havre", "Le Lavandou", "Le Légué – Saint-Brieuc", "Le Marin", "Lesconil", "Les Frégates – Baie du Mont-Saint-Michel", "Les Sables-d'Olonne", "Les Saintes", "L'Estérel", "Le Tréport", "Lézardrieux", "L'Herbaudière", "Locquirec", "Loctudy – Île-Tudy", "Loguivy-de-la-Mer", "Lorient", "Luc-sur-Mer", "Macinaggio", "Marines de Cogolin", "Marseille", "Martigues", "Mayotte – Dzaoudzi", "Menton", "Mèze", "Mimizan", "Morgat – Crozon", "Nice", "Nouméa", "Ouessant", "Ouistreham", "Paimpol", "Palavas-les-Flots", "Pauillac", "Pays de Lorient", "Pénestin", "Perros-Guirec", "Pirou", "Plouguerneau", "Pornichet", "Pornic – Pays de Retz", "Porquerolles", "Portbail", "Port-Camargue", "Port-en-Bessin", "Port-la-Nouvelle", "Port-Leucate", "Port-Manec'h", "Port-Médoc", "Porto-Vecchio", "Port-Saint-Louis-du-Rhône", "Portsall", "Port-Vendres", "Presqu'île de Quiberon", "Primel – Plougasnou", "Propriano", "Roscoff", "Royan – Côte de Beauté", "Saint-Barthélemy", "Saint-Brevin-les-Pins", "Saint-Briac-sur-Mer", "Saint-Cast-le-Guildo", "Saint-Côme-de-Fresné", "Saint-Cyprien", "Sainte-Marie (La Réunion)", "Sainte-Maxime", "Saintes-Maries-de-la-Mer", "Saint-Florent", "Saint-Germain-sur-Ay", "Saint-Gilles-Croix-de-Vie", "Saint-Gilles-les-Bains", "Saint-Laurent-du-Maroni", "Saint-Malo", "Saint-Martin-de-Bréhal", "Saint-Nazaire", "Saint-Pierre-et-Miquelon", "Saint-Pierre (La Réunion)", "Saint-Quay-Portrieux", "Saint-Raphaël", "Saint-Suliac", "Saint-Tropez", "Saint-Vaast-la-Hougue", "Saint-Valery-en-Caux", "Saint-Valery-sur-Somme", "Sanary-sur-Mer", "Sète", "Socoa – Saint-Jean-de-Luz", "Solenzara", "Talmont-Saint-Hilaire", "Taverna", "Théoule-sur-Mer", "Toulon", "Trébeurden – Île-Grande", "Trégastel – Île Grande", "Tréguier", "Trévignon – Concarneau", "Trouville – Deauville", "Valras-Plage", "Vannes", "Ver-sur-Mer", "Villefranche-sur-Mer"];
+const STN_SEEN = ["Trévignon – Concarneau"];
+const STN = (() => {
+  const KEY = "crr-stn-v1";
+  const nrm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const esc3 = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const track = (n, d) => { try { if (window.umami) window.umami.track(n, d); } catch (e) {} };
+  const get = () => { try { return localStorage.getItem(KEY) || ""; } catch (e) { return ""; } };
+  const save = v => { try { localStorage.setItem(KEY, v); } catch (e) {} };
+  const seenHTML = () => STN_SEEN.length
+    ? `<p class="stn-seen"><b>Stations déjà signalées :</b> ${STN_SEEN.map(esc3).join(" · ")}<span class="stn-fine">Liste mise à jour chaque matin.</span></p>`
+    : `<p class="stn-seen">Aucune station signalée pour l'instant : soyez la première.<span class="stn-fine">Liste mise à jour chaque matin.</span></p>`;
+  const done = v => `<div class="stn-ok" role="status"><b>Au moins un(e) équipier(ère) de ${esc3(v)} utilise le site.</b>
+      <span>Merci, c'est noté. Rien d'autre n'est enregistré : ni nom, ni compte.</span>
+      <button class="linkbtn" id="stnchg" type="button">Changer de station</button></div>${seenHTML()}`;
+  const form = () => `<p class="stn-lead">Vous êtes sauveteur ou sauveteuse à la SNSM ? Dites d'où vous venez : la station apparaîtra dans la liste, sans aucune donnée personnelle.</p>
+      <input class="stn-in" type="search" autocomplete="off" spellcheck="false" placeholder="Tapez votre station : Trévignon, Royan…" aria-label="Chercher votre station SNSM">
+      <div class="stn-res"></div>${seenHTML()}`;
+  const html = () => `<section class="card stn" id="stn"><div class="ico">⚓</div><h2>D'où venez-vous ?</h2>${get() ? done(get()) : form()}</section>`;
+  function wire(root) {
+    const box = root.querySelector("#stn"); if (!box) return;
+    const chg = box.querySelector("#stnchg");
+    if (chg) { chg.onclick = () => { save(""); box.innerHTML = `<div class="ico">⚓</div><h2>D'où venez-vous ?</h2>` + form(); wire(root); }; return; }
+    const inp = box.querySelector(".stn-in"), res = box.querySelector(".stn-res");
+    const pick = v => { save(v); track("station", { nom: v }); box.innerHTML = `<div class="ico">⚓</div><h2>D'où venez-vous ?</h2>` + done(v); wire(root); };
+    const show = () => {
+      const q = nrm(inp.value);
+      if (q.length < 2) { res.innerHTML = ""; return; }
+      const all = STATIONS.filter(s => nrm(s).includes(q));
+      const hits = all.sort((a, b) => nrm(a).indexOf(q) - nrm(b).indexOf(q)).slice(0, 8);
+      res.innerHTML = hits.map(s => `<button type="button" class="stn-hit" data-s="${esc3(s)}">${esc3(s)}</button>`).join("")
+        + (hits.length ? "" : `<p class="stn-none">Aucune station de ce nom dans la liste.</p>`)
+        + (!hits.length && inp.value.trim().length > 2 ? `<button type="button" class="linkbtn stn-free">Ma station n'y est pas : envoyer « ${esc3(inp.value.trim())} »</button>` : "");
+      res.querySelectorAll(".stn-hit").forEach(b => { b.onclick = () => pick(b.dataset.s); });
+      const f = res.querySelector(".stn-free");
+      if (f) f.onclick = () => { const v = inp.value.trim().slice(0, 40); save(v); track("station", { nom: v, hors_liste: "oui" }); box.innerHTML = `<div class="ico">⚓</div><h2>D'où venez-vous ?</h2>` + done(v); wire(root); };
+    };
+    let t = 0;
+    inp.oninput = () => { clearTimeout(t); t = setTimeout(show, 100); };
+  }
+  return { html, wire };
+})();
 /* ============================================================
    APPLICATION — réglages faciles à modifier
    ============================================================ */
@@ -2469,7 +2525,9 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
         <a class="btn violet" href="#examen">Passer l'examen</a>
       </article>
     </div>
+    ${STN.html()}
     <p class="fine">Questions et corrections rédigées à partir du manuel de préparation ANFR. Elles s'inspirent du format des tests officiels sans les reproduire. L'examen réel n'est pas posé sur les annexes du manuel.</p>`);
+    STN.wire(app);
   }
 
   /* ---------- cours ---------- */
