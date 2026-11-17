@@ -321,6 +321,14 @@ td.m,th.m{font-variant-numeric:tabular-nums;white-space:nowrap}
 .cmp em{font-style:normal;font-weight:700;font-size:12px;opacity:.85}
 .ans .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:9px;background:var(--surface-2);color:var(--muted);font:800 14px var(--f-body);margin-right:6px;vertical-align:middle}
 
+/* contact Instagram */
+.igline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px;padding-bottom:14px;border-bottom:1px solid var(--line);font-size:1rem;color:var(--ink)}
+.iglink{display:inline-flex;align-items:center;gap:7px;font-weight:800;text-decoration:none;color:var(--blue-d);border-bottom:2px solid currentColor}
+.iglink svg{width:18px;height:18px}
+.igtab{display:inline-flex;align-items:center;gap:7px;font:800 15px/1 var(--f-body);text-decoration:none;color:var(--muted);padding:10px 14px;border-radius:999px;border:2px solid var(--line)}
+.igtab:hover{background:var(--surface-2);color:var(--blue-d)}
+.igtab svg{width:17px;height:17px}
+@media (max-width:640px){.igtab span{display:none}.igtab{padding:9px 11px;order:0;margin-left:auto}.tabs{order:1}}
 .sitefoot{margin:48px auto 32px;padding-top:18px;border-top:2px solid var(--line,rgba(127,127,127,.25));font-size:.82rem;line-height:1.5;opacity:.75}.sitefoot p{margin:0}
 
 .sec.pass{border-color:var(--good-ink,#1f9d55);background:var(--good-bg,rgba(46,204,113,.14))}
@@ -447,10 +455,11 @@ html.wel-open,html.wel-open body{overflow:hidden}
       <a href="#entrainement" data-tab="entrainement">QCM</a>
       <a href="#examen" data-tab="examen">Examen</a>
     </nav>
+    <a class="igtab" href="https://www.instagram.com/reussir.son.crr/" target="_blank" rel="noopener" title="M'écrire sur Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-8 8H8l-4 3v-4.3A8 8 0 0 1 13 4a8 8 0 0 1 8 8Z"/><path d="M9 11h8M9 15h5"/></svg><span>Instagram</span></a>
   </div>
 </header>
 <main class="wrap" id="app"></main>
-<footer class="wrap sitefoot"><p><b>Outil de révision non officiel.</b> Ce site est une aide personnelle à la préparation du CRR maritime. Il n'est ni édité, ni validé, ni affilié à l'ANFR. Le cours, les fiches et les questions sont rédigés d'après le manuel ANFR « Préparation à l'examen du CRR maritime » (juin 2025, V16), qui reste la seule référence. Des erreurs ou des mises à jour du manuel sont possibles : vérifiez toujours dans le manuel officiel. Aucune garantie de réussite à l'examen.</p></footer>
+<footer class="wrap sitefoot"><p class="igline">Une question, une erreur ? Une amélioration à proposer ? <a class="iglink" href="https://www.instagram.com/reussir.son.crr/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-8 8H8l-4 3v-4.3A8 8 0 0 1 13 4a8 8 0 0 1 8 8Z"/><path d="M9 11h8M9 15h5"/></svg>Écrivez-moi sur Instagram</a></p><p><b>Outil de révision non officiel.</b> Ce site est une aide personnelle à la préparation du CRR maritime. Il n'est ni édité, ni validé, ni affilié à l'ANFR. Le cours, les fiches et les questions sont rédigés d'après le manuel ANFR « Préparation à l'examen du CRR maritime » (juin 2025, V16), qui reste la seule référence. Des erreurs ou des mises à jour du manuel sont possibles : vérifiez toujours dans le manuel officiel. Aucune garantie de réussite à l'examen.</p></footer>
 <script>
 /* ============================================================
    BASE DE DONNÉES — à remplacer ou compléter ici si besoin.
