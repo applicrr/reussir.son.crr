@@ -399,6 +399,40 @@ td.m,th.m{font-variant-numeric:tabular-nums;white-space:nowrap}
 .stn-map .d{fill:var(--blue);stroke:var(--surface);stroke-width:.6}
 .stn-map .d.me{fill:var(--orange);stroke:var(--surface);stroke-width:1}
 .stn-map figcaption{margin-top:6px;font-size:.8rem;font-weight:700;color:var(--muted)}
+
+/* ---- Écran de bienvenue (première visite) ---- */
+html.wel-open,html.wel-open body{overflow:hidden}
+.wel{position:fixed;inset:0;z-index:60;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch;padding:28px 16px calc(28px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;align-items:flex-start}
+.wel-box{width:100%;max-width:680px;background:var(--surface);border:2px solid var(--line);border-bottom-width:6px;border-radius:26px;padding:30px 28px 26px;margin:auto}
+.wel-head{text-align:center}
+.wel-head h1{font-family:var(--f-display);font-size:38px;line-height:1.1;color:var(--head);margin:10px 0 8px}
+.wel-lead{margin:0 0 22px;color:var(--muted);font-size:17px}
+.wel-lead b{color:var(--ink)}
+.wel-pts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.wel-pts li{display:flex;gap:14px;align-items:flex-start;background:var(--surface-2);border:1.5px solid var(--line);border-radius:18px;padding:14px 16px}
+.wel-ic{flex:0 0 42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--blue-bg);color:var(--blue-d)}
+.wel-ic svg{width:24px;height:24px}
+.wel-ic.o{background:var(--orange-bg);color:var(--orange-d)}
+.wel-ic.g{background:var(--good-bg);color:var(--good-ink)}
+.wel-pts b{display:block;color:var(--head);font-size:17px;line-height:1.3;margin-bottom:3px}
+.wel-pts p{margin:0;font-size:14.5px;line-height:1.5;color:var(--muted)}
+.wel-stn{display:flex;gap:16px;align-items:center;margin-top:16px;padding:14px 16px;border:1.5px dashed var(--line);border-radius:18px}
+.wel-stn-txt b{display:block;color:var(--head);font-size:17px;margin-bottom:3px}
+.wel-stn-txt p{margin:0;font-size:14.5px;line-height:1.5;color:var(--muted)}
+.wel-stn-txt p b{display:inline;font-size:inherit}
+.wel-mini{flex:0 0 108px;margin:0}
+.wel-mini svg{max-height:120px}
+.wel-go{display:block;width:100%;margin-top:22px;font-size:19px;padding:18px 20px;--c:var(--orange);--cd:var(--orange-d)}
+.wel-foot{margin:14px 0 0;text-align:center;font-size:14px;font-weight:700;color:var(--muted)}
+.wel-foot span{display:block;font-weight:400;font-size:12.5px;opacity:.75;margin-top:2px}
+@media(max-width:560px){
+  .wel{padding:14px 10px calc(16px + env(safe-area-inset-bottom,0px))}
+  .wel-box{padding:22px 18px 20px;border-radius:22px}
+  .wel-head h1{font-size:30px}
+  .wel-lead{font-size:15.5px}
+  .wel-stn{flex-direction:column;align-items:center;text-align:center}
+  .wel-mini{flex:0 0 auto;width:92px}
+}
 </style>
 <header class="bar" id="bar">
   <div class="wrap">
@@ -2402,6 +2436,65 @@ const STN = (() => {
   }
   return { html, wire };
 })();
+/* Page d'accueil affichée à la première visite : ce qu'est le site, d'où viennent les contenus, ce qui est (ou non) collecté. */
+const WEL = (() => {
+  const KEY = "crr-wel-v1";
+  const seen = () => { try { return localStorage.getItem(KEY) === "1"; } catch (e) { return false; } };
+  const mark = () => { try { localStorage.setItem(KEY, "1"); } catch (e) { } };
+  const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+
+  const mini = () => {
+    const dots = STN_SEEN.filter(n => STN_XY[n]).map(n => `<circle cx="${STN_XY[n][0]}" cy="${STN_XY[n][1]}" r="1.9" class="d"/>`).join("");
+    return `<div class="stn-map wel-mini"><svg viewBox="0 0 ${FR_W} 100" role="img" aria-label="Carte de France des stations SNSM qui utilisent le site">
+      <path class="fr" d="${FR_PATH}"/><path class="fr" d="${CO_PATH}"/>${dots}</svg></div>`;
+  };
+
+  const html = () => `<div class="wel" id="wel" role="dialog" aria-modal="true" aria-labelledby="weltit" tabindex="-1">
+    <div class="wel-box">
+      <div class="wel-head">
+        <svg width="54" height="54" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="#1E88E5"/><path d="M17 6v10M12 9l5-3 5 3" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M5 22c3-3 5-3 8 0s5 3 8 0 5-3 8 0" stroke="#FFC93C" stroke-width="3" stroke-linecap="round" fill="none"/></svg>
+        <h1 id="weltit">Bienvenue à bord</h1>
+        <p class="wel-lead"><b>Cap sur le CRR</b> est un site d'entraînement gratuit pour préparer le Certificat Restreint de Radiotéléphoniste du service mobile maritime. Cours, fiches, QCM et examens blancs : tout est là pour arriver prêt le jour J.</p>
+      </div>
+
+      <ul class="wel-pts">
+        <li><span class="wel-ic b">${ic('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6M9 12h6"/>')}</span>
+          <div><b>Tout vient du manuel de l'ANFR</b><p>Le cours, les fiches, les QCM et les examens blancs sont rédigés d'après le manuel officiel « Préparation à l'examen du CRR maritime » (juin 2025, V16). Chaque correction vous indique la page où vérifier.</p></div></li>
+        <li><span class="wel-ic o">${ic('<path d="M12 7v13M8 10h8M5 15a7 7 0 0 0 14 0"/><circle cx="12" cy="4.6" r="2.2"/>')}</span>
+          <div><b>Un site amateur, fait par un bénévole</b><p>Il n'est ni édité, ni validé, ni affilié à l'ANFR ou à un quelconque organisme officiel, et il ne remplace ni le manuel ni la formation. En cas de doute, c'est toujours le manuel qui fait foi.</p></div></li>
+        <li><span class="wel-ic g">${ic('<rect x="4" y="10.5" width="16" height="10" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>')}</span>
+          <div><b>Pas de compte, pas de données personnelles</b><p>Aucune inscription, aucun e-mail, aucun mot de passe : vos scores et votre progression restent dans votre navigateur. Seul un comptage de fréquentation anonyme (pages vues, questions les plus ratées) m'aide à améliorer le site — impossible de savoir qui vous êtes.</p></div></li>
+      </ul>
+
+      <div class="wel-stn">
+        ${mini()}
+        <div class="wel-stn-txt"><b>Et la carte des stations, alors ?</b>
+          <p>Sur l'accueil, vous pourrez — si l'envie vous en prend — poser le nom de votre station SNSM sur cette carte, histoire de voir d'où viennent les équipages qui révisent. C'est <b>facultatif</b> et ça ne change rien à ce qui est écrit plus haut : c'est le nom de la station qui s'affiche, jamais le vôtre, et rien n'est enregistré d'autre. Passez votre chemin si vous préférez : on ne vous demandera rien.</p></div>
+      </div>
+
+      <button class="btn big wel-go" id="welgo" type="button">Passer à l'entraînement</button>
+      <p class="wel-foot">Bonnes révisions, et bon vent. <span>Ce message ne s'affiche qu'à votre première visite.</span></p>
+    </div>
+  </div>`;
+
+  function show(force) {
+    if (!force && seen()) return;
+    const d = document.createElement("div");
+    d.innerHTML = html();
+    const box = d.firstElementChild;
+    document.body.appendChild(box);
+    document.documentElement.classList.add("wel-open");
+    box.querySelector("#welgo").onclick = () => {
+      mark();
+      document.documentElement.classList.remove("wel-open");
+      box.remove();
+      try { if (window.umami) window.umami.track("accueil-compris"); } catch (e) { }
+    };
+    box.scrollTop = 0;
+    box.focus({ preventScroll: true });
+  }
+  return { show };
+})();
 /* ============================================================
    APPLICATION — réglages faciles à modifier
    ============================================================ */
@@ -3018,6 +3111,7 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
 
   window.addEventListener("hashchange", route);
   route();
+  WEL.show();
 })();
 </script>
 
