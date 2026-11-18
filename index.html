@@ -321,14 +321,6 @@ td.m,th.m{font-variant-numeric:tabular-nums;white-space:nowrap}
 .cmp em{font-style:normal;font-weight:700;font-size:12px;opacity:.85}
 .ans .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:9px;background:var(--surface-2);color:var(--muted);font:800 14px var(--f-body);margin-right:6px;vertical-align:middle}
 
-/* contact Instagram */
-.igline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px;padding-bottom:14px;border-bottom:1px solid var(--line);font-size:1rem;color:var(--ink)}
-.iglink{display:inline-flex;align-items:center;gap:7px;font-weight:800;text-decoration:none;color:var(--blue-d);border-bottom:2px solid currentColor}
-.iglink svg{width:18px;height:18px}
-.igtab{display:inline-flex;align-items:center;gap:7px;font:800 15px/1 var(--f-body);text-decoration:none;color:var(--muted);padding:10px 14px;border-radius:999px;border:2px solid var(--line)}
-.igtab:hover{background:var(--surface-2);color:var(--blue-d)}
-.igtab svg{width:17px;height:17px}
-@media (max-width:640px){.igtab span{display:none}.igtab{padding:9px 11px;order:0;margin-left:auto}.tabs{order:1}}
 .sitefoot{margin:48px auto 32px;padding-top:18px;border-top:2px solid var(--line,rgba(127,127,127,.25));font-size:.82rem;line-height:1.5;opacity:.75}.sitefoot p{margin:0}
 
 .sec.pass{border-color:var(--good-ink,#1f9d55);background:var(--good-bg,rgba(46,204,113,.14))}
@@ -441,6 +433,21 @@ html.wel-open,html.wel-open body{overflow:hidden}
   .wel-stn{flex-direction:column;align-items:center;text-align:center}
   .wel-mini{flex:0 0 auto;width:92px}
 }
+
+/* contact Instagram */
+.igline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px;padding-bottom:14px;border-bottom:1px solid var(--line);font-size:1rem;color:var(--ink)}
+.iglink{display:inline-flex;align-items:center;gap:7px;font-weight:800;text-decoration:none;color:var(--blue-d);border-bottom:2px solid currentColor}
+.iglink svg{width:18px;height:18px}
+.igtab{display:inline-flex;align-items:center;gap:7px;font:800 15px/1 var(--f-body);text-decoration:none;color:var(--muted);padding:10px 14px;border-radius:999px;border:2px solid var(--line)}
+.igtab:hover{background:var(--surface-2);color:var(--blue-d)}
+.igtab svg{width:17px;height:17px}
+@media (max-width:640px){.igtab span{display:none}.igtab{padding:9px 11px;order:0;margin-left:auto}.tabs{order:1}}
+
+/* Rappel de la source ANFR sur les écrans de QCM et d'examen */
+.srcnote{display:flex;gap:10px;align-items:flex-start;margin:0 0 18px;padding:12px 15px;background:var(--surface-2);border:1.5px solid var(--line);border-left:5px solid var(--blue);border-radius:14px;font-size:14.5px;line-height:1.5;color:var(--muted);text-align:left}
+.srcnote svg{flex:0 0 22px;margin-top:1px;color:var(--blue-d)}
+.srcnote b{color:var(--head);font-weight:800}
+.endcard+.srcnote,.secs+.srcnote{margin-top:22px}
 </style>
 <header class="bar" id="bar">
   <div class="wrap">
@@ -2615,6 +2622,8 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
     return `<${tag} class="${cls}" ${mode === "pick" ? `data-i="${i}" type="button"` : ""}><span class="L">${L[i]}</span><span class="t">${esc(o.t)}${flag ? `<span class="flag">${flag}</span>` : ""}</span></${tag}>`;
   }).join("");
   const srcHTML = q => `<span class="src">${IC.page}${esc(q.p)}</span>`;
+  /* Rappel de la source, affiché sur les écrans de QCM et d'examen blanc. */
+  const SRC_NOTE = `<p class="srcnote">${svg('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6M9 12h6"/>', 22)}<span><b>Questions tirées du manuel officiel de l'ANFR</b> « Préparation à l'examen du CRR maritime » (juin 2025, V16) : chaque correction indique la page où vérifier.</span></p>`;
   const set = html => { app.innerHTML = html; };
 
   /* ---------- routage ---------- */
@@ -2720,6 +2729,7 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
     set(`<div class="quiz orange-set">
       <h1>QCM d'entraînement</h1>
       <p class="lead">Répondez, validez, puis lisez la correction détaillée avec la page du manuel où trouver l'explication.</p>
+      ${SRC_NOTE}
       ${cfg.len === -1 ? `<p class="fine" style="margin-top:-6px">${HARDQ.filter(q => !cfg.sec || q.s === cfg.sec).length} questions réservées à cette rubrique, aux réponses très proches. ${cfg.sec ? "Série de 24 questions sur ce thème." : "Série de 24 questions répartie comme à l'examen (6 + 8 + 10), notée par partie : reçu ou ajourné."} Quelques questions que vous avez ratées (${myMissed(ALLQ().filter(q => !q.x && (!cfg.sec || q.s === cfg.sec))).length} en ce moment) y sont mélangées.</p>` : ""}
       ${cfg.len === 24 && !cfg.sec ? '<p class="fine" style="margin-top:-6px">Série de 24 questions répartie comme à l\'examen (6 + 8 + 10), notée par partie : reçu ou ajourné.</p>' : ""}
       <div class="setup">
@@ -2811,6 +2821,7 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
         <button class="btn ${T.missed.length ? "ghost" : "orange"}" id="again" type="button">Nouvelle série</button>
         <a class="btn ghost" href="#cours">Revoir le cours</a></div></div>
       ${secs}
+      ${SRC_NOTE}
       ${T.missed.length ? `<h3 style="margin:30px 0 14px">À revoir</h3>${missed}` : ""}</div>`);
     const redo = app.querySelector("#redo");
     if (redo) redo.onclick = () => startTrain(T.missed.map(p => p.q));
@@ -2831,6 +2842,7 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
     set(`<div class="quiz violet-set">
       <h1>Examen blanc</h1>
       <p class="lead">Les conditions du CRR maritime : 24 questions à choix multiples. À l'examen, chaque question est d'abord lue à voix haute, puis vous avez <b>22 secondes</b> pour répondre.</p>
+      ${SRC_NOTE}
       <div class="setup">
         <ul class="rules">
           <li><b>6</b> questions de généralités, <b>8</b> de radiotéléphonie VHF, <b>10</b> de VHF ASN et SMDSM.</li>
@@ -2933,6 +2945,7 @@ const TRAIN_LENGTHS = [24, -1, 0];  // -1 = questions difficiles ;     // 24 = f
       <div class="row" style="justify-content:center;margin-top:22px"><button class="btn violet" id="again" type="button">Refaire un examen</button><a class="btn ghost" href="#entrainement">Aller au QCM</a><a class="btn ghost" href="#cours">Revoir le cours</a></div></div>
       <div class="secs">${secs}</div>
       <p class="rule">Règle de l'ANFR : « la moyenne à chacune des trois parties est nécessaire pour être reçu », soit au moins la moitié des points dans chaque partie (3 sur 6, 4 sur 8, 5 sur 10). Simulation indicative. À l'examen, chaque question est lue à voix haute avant le départ des 22 secondes de réponse ; le temps de lecture affiché ici est une estimation calculée sur la longueur de la question.</p>
+      ${SRC_NOTE}
       <h3 style="margin:26px 0 14px">Correction question par question</h3>${items}</div>`);
     app.querySelector("#again").onclick = viewExamSetup;
     window.scrollTo(0, 0);
